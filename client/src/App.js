@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
+import axios from 'axios';
 import './App.css';
 import {
   Input,
@@ -44,6 +45,35 @@ const App = props => {
 
   const login = data => {
     // do login stuff here
+    axios({
+      url: '/login',
+      method: 'post',
+      headers: {
+        "charset": "UTF-8",
+        "accept": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+      },
+      data: {
+        name: data.name,
+        password: data.password
+      }
+    })
+      .then(res => {
+        if (res.data !== 'Invalid login. Please try again!') {
+          this.setState({
+            loginModal: false,
+            currentUser: res.data,
+            loading: false
+          })
+        } else {
+          this.setState({
+            loginModal: true,
+            loginError: res.data,
+            loading: false
+          })
+        }
+      })
   }
 
   const { getFieldDecorator } = props.form
