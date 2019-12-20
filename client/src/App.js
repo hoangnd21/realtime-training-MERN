@@ -1,24 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {
   Input,
   Row,
   Col,
+  Form,
 } from 'antd'
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:8000');
 
-function App() {
+const App = (props) => {
 
-  const [defaultMessage, setDefaultMessage] = useState(null)
   const sendMessage = e => {
-    socket.emit('react_message', e.target.value);
-    socket.on('recieve', function (msg) {
-      console.log('message: ' + msg);
-    })
-    setDefaultMessage(null)
+    e.preventDefault()
+    props.form.validateFields(err => {
+      if (err) {
+        return;
+      }
+      socket.emit('react_message', e.target.value);
+      socket.on('recieve', function (msg) {
+        console.log('message: ' + msg);
+      })
+    });
+    props.form.resetFields();
   }
+
+  const { getFieldDecorator } = props.form
 
   return (
     <div className="App">
@@ -33,9 +41,11 @@ function App() {
           <p style={{ textAlign: 'left', minHeight: '55vh' }}>
             chatbox<br />
           </p>
-          <div style={{ verticalAlign: 'bottom' }}>
-            <Input onPressEnter={sendMessage} placeholder='Enter something...' />
-          </div>
+          <Form style={{ verticalAlign: 'bottom', marginBottom: 0 }}>
+            <Form.Item>
+              {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
+            </Form.Item>
+          </Form>
         </Col>
         <Col xl={6}>
           nav
@@ -45,4 +55,5 @@ function App() {
   );
 }
 
-export default App;
+const FApp = Form.create({ name: 'message' })(App);
+export default FApp;
