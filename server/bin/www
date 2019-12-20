@@ -107,6 +107,10 @@ io.on('connection', function (socket) {
   });
   socket.on('react_message', function (msg) {
     console.log('message: ' + msg);
+    socket.emit('recieve', function (msg) {
+      console.log('message: ' + msg);
+    });
   });
+
 });
 io.listen(8000);
