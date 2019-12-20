@@ -8,10 +8,15 @@ import {
   Form,
 } from 'antd'
 import openSocket from 'socket.io-client';
+import Login from './Login'
+
+document.title = 'Chatbox'
+
 const socket = openSocket('http://localhost:8000');
 
 const App = props => {
 
+  const [currentUser, setCurrentUser] = useState(null)
   const [userMessage, setUserMessage] = useState(null)
   const [receivedMessage, setReceivedMessage] = useState(null)
 
@@ -37,37 +42,49 @@ const App = props => {
     })
   }
 
+  const login = data => {
+    // do login stuff here
+  }
+
   const { getFieldDecorator } = props.form
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    !currentUser ?
+      <div style={{ width: '50%', margin: 20, padding: 20, border: '1px solid #34558B', borderRadius: 5 }}>
+        <Login login={login} />
+      </div>
+      :
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          Our Chatbox App
       </header>
-      <Row style={{ margin: 10, padding: 10, border: '1px solid #34558B', borderRadius: 5 }}>
-        <Col xl={6}>
-          nav
+        <Row style={{ margin: 10, padding: 10, border: '1px solid #34558B', borderRadius: 5 }}>
+          <Col xl={6}>
+            nav
         </Col>
-        <Col xl={12} style={{ borderRight: '1px solid #34558B', borderLeft: '1px solid #34558B', padding: 10 }}>
-          <div style={{ minHeight: '55vh' }}>
-            {receivedMessage ? <div className='received-message'>
-              {receivedMessage}
-            </div> : null}
-            {userMessage ? <div className='user-message'>
-              {userMessage}
-            </div> : null}
-          </div>
-          <Form style={{ verticalAlign: 'bottom', margin: '0 1em' }}>
-            <Form.Item>
-              {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
-            </Form.Item>
-          </Form>
+          <Col xl={12} style={{ borderRight: '1px solid #34558B', borderLeft: '1px solid #34558B', padding: 10 }}>
+            <div style={{ minHeight: '55vh' }}>
+              {receivedMessage ? <div className='received-message'>
+                message from backend: {receivedMessage}
+              </div> : null}
+              {userMessage ?
+                <div className='user-message'>
+                  user typed in: {userMessage}
+                </div>
+                : null}
+            </div>
+            <Form style={{ verticalAlign: 'bottom', margin: '0 1em', textAlign: 'left' }} layout='inline'>
+              <Form.Item>
+                {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
+              </Form.Item>
+            </Form>
+          </Col>
+          <Col xl={6}>
+            nav
         </Col>
-        <Col xl={6}>
-          nav
-        </Col>
-      </Row>
-    </div>
+        </Row>
+      </div>
   );
 }
 

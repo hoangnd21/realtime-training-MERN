@@ -45,6 +45,7 @@
   text-align: left;
   margin: 1em;
   padding: 1em;
+  vertical-align: middle
 }
 
 .user-message {
@@ -53,5 +54,6 @@
   text-align: right;
   margin: 1em;
   padding: 1em;
+  vertical-align: middle;
   color: white;
 }
