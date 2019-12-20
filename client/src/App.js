@@ -5,20 +5,39 @@ import {
   Input,
   Row,
   Col,
+  Form,
 } from 'antd'
 import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:8000');
 
-function App() {
+const App = props => {
 
-  const [defaultMessage, setDefaultMessage] = useState(null)
+  const [userMessage, setUserMessage] = useState(null)
+  const [receivedMessage, setReceivedMessage] = useState(null)
+
   const sendMessage = e => {
-    socket.emit('react_message', e.target.value);
-    socket.on('recieve', function (msg) {
-      console.log('message: ' + msg);
-    })
-    setDefaultMessage(null)
+    e.preventDefault()
+    props.form.validateFields(err => {
+      if (err) {
+        return;
+      }
+      socket.emit('react_message', e.target.value);
+      setUserMessage(e.target.value)
+      // socket.on('recieve', function (msg) {
+      //   setReceivedMessage(msg)
+      // })
+      replyMessage()
+    });
+    props.form.resetFields();
   }
+
+  const replyMessage = () => {
+    socket.on('recieve', function (msg) {
+      setReceivedMessage(msg)
+    })
+  }
+
+  const { getFieldDecorator } = props.form
 
   return (
     <div className="App">
@@ -30,12 +49,19 @@ function App() {
           nav
         </Col>
         <Col xl={12} style={{ borderRight: '1px solid #34558B', borderLeft: '1px solid #34558B', padding: 10 }}>
-          <p style={{ textAlign: 'left', minHeight: '55vh' }}>
-            chatbox<br />
-          </p>
-          <div style={{ verticalAlign: 'bottom' }}>
-            <Input onPressEnter={sendMessage} placeholder='Enter something...' />
+          <div style={{ minHeight: '55vh' }}>
+            {receivedMessage ? <div className='received-message'>
+              {receivedMessage}
+            </div> : null}
+            {userMessage ? <div className='user-message'>
+              {userMessage}
+            </div> : null}
           </div>
+          <Form style={{ verticalAlign: 'bottom', margin: '0 1em' }}>
+            <Form.Item>
+              {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
+            </Form.Item>
+          </Form>
         </Col>
         <Col xl={6}>
           nav
@@ -45,4 +71,5 @@ function App() {
   );
 }
 
-export default App;
+const FApp = Form.create({ name: 'message' })(App);
+export default FApp;

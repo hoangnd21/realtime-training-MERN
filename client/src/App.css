@@ -38,3 +38,20 @@
     transform: rotate(360deg);
   }
 }
+
+.received-message {
+  background-color: whitesmoke;
+  border-radius: 10px;
+  text-align: left;
+  margin: 1em;
+  padding: 1em;
+}
+
+.user-message {
+  background-color: #34558B;
+  border-radius: 10px;
+  text-align: right;
+  margin: 1em;
+  padding: 1em;
+  color: white;
+}
