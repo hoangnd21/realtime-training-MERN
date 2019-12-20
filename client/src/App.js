@@ -14,6 +14,9 @@ function App() {
   const [defaultMessage, setDefaultMessage] = useState(null)
   const sendMessage = e => {
     socket.emit('react_message', e.target.value);
+    socket.on('recieve', function (msg) {
+      console.log('message: ' + msg);
+    })
     setDefaultMessage(null)
   }
 
@@ -31,7 +34,7 @@ function App() {
             chatbox<br />
           </p>
           <div style={{ verticalAlign: 'bottom' }}>
-            <Input onPressEnter={sendMessage} placeholder='Enter something...' value={defaultMessage} />
+            <Input onPressEnter={sendMessage} placeholder='Enter something...' />
           </div>
         </Col>
         <Col xl={6}>
