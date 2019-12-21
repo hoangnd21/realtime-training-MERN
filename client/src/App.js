@@ -32,6 +32,15 @@ const App = props => {
       // socket.on('recieve', function (msg) {
       //   setReceivedMessage(msg)
       // })
+      axios.post('http://localhost:9000/msg/addMsg',
+        {
+          user: "a",
+          content: e.target.value
+        }
+      )
+        .then(res => {
+          console.log("okk")
+        })
       replyMessage()
     });
     props.form.resetFields();
@@ -39,7 +48,23 @@ const App = props => {
 
   const replyMessage = () => {
     socket.on('recieve', function (msg) {
-      setReceivedMessage(msg)
+      // msg ?
+      axios({
+        baseURL: '/msg',
+        method: 'get',
+        headers: {
+          "charset": "UTF-8",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+        }
+      })
+        .then(res => {
+          console.log(res.data)
+          setReceivedMessage(msg)
+        })
+      // : console.log("fail")
+
     })
   }
 
@@ -79,42 +104,42 @@ const App = props => {
   const { getFieldDecorator } = props.form
 
   return (
-    !currentUser ?
-      <div style={{ width: '50%', margin: 20, padding: 20, border: '1px solid #34558B', borderRadius: 5 }}>
-        <Login login={login} />
-      </div>
-      :
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          Our Chatbox App
+    // !currentUser ?
+    //   <div style={{ width: '50%', margin: 20, padding: 20, border: '1px solid #34558B', borderRadius: 5 }}>
+    //     <Login login={login} />
+    //   </div>
+    //   :
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        Our Chatbox App
       </header>
-        <Row style={{ margin: 10, padding: 10, border: '1px solid #34558B', borderRadius: 5 }}>
-          <Col xl={6}>
-            nav
+      <Row style={{ margin: 10, padding: 10, border: '1px solid #34558B', borderRadius: 5 }}>
+        <Col xl={6}>
+          nav
         </Col>
-          <Col xl={12} style={{ borderRight: '1px solid #34558B', borderLeft: '1px solid #34558B', padding: 10 }}>
-            <div style={{ minHeight: '55vh' }}>
-              {receivedMessage ? <div className='received-message'>
-                message from backend: {receivedMessage}
-              </div> : null}
-              {userMessage ?
-                <div className='user-message'>
-                  user typed in: {userMessage}
-                </div>
-                : null}
-            </div>
-            <Form style={{ verticalAlign: 'bottom', margin: '0 1em', textAlign: 'left' }} layout='inline'>
-              <Form.Item>
-                {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
-              </Form.Item>
-            </Form>
-          </Col>
-          <Col xl={6}>
-            nav
+        <Col xl={12} style={{ borderRight: '1px solid #34558B', borderLeft: '1px solid #34558B', padding: 10 }}>
+          <div style={{ minHeight: '55vh' }}>
+            {receivedMessage ? <div className='received-message'>
+              message from backend: {receivedMessage}
+            </div> : null}
+            {userMessage ?
+              <div className='user-message'>
+                user typed in: {userMessage}
+              </div>
+              : null}
+          </div>
+          <Form style={{ verticalAlign: 'bottom', margin: '0 1em', textAlign: 'left' }} layout='inline'>
+            <Form.Item>
+              {getFieldDecorator('message')(<Input onPressEnter={sendMessage} placeholder='Enter something...' />)}
+            </Form.Item>
+          </Form>
         </Col>
-        </Row>
-      </div>
+        <Col xl={6}>
+          nav
+        </Col>
+      </Row>
+    </div>
   );
 }
 

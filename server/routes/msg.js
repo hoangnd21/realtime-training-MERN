@@ -5,7 +5,7 @@ const msg = require('../controllers/msg')
 router.get('/', function (req, res) {
   msg.getAllMsg(req, res)
 });
-router.get('/addMsg', function (req, res) {
+router.post('/addMsg', function (req, res) {
   msg.addMsg(req, res)
 });
 
